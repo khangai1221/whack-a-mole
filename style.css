@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #e8f0ff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-gap: 15px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.hole {
+  width: 80px;
+  height: 80px;
+  background-color: #ccc;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.mole {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+/* Hammer */
+#hammer {
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  pointer-events: none;
+  transform: rotate(-45deg);
+  transition: transform 0.1s;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
