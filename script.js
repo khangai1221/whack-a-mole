@@ -1,14 +1,21 @@
 const container = document.querySelector(".container");
-container.src = "./background.png";
 
 const scoreDisplay = document.createElement("div");
 scoreDisplay.textContent = "Score: 0";
 container.appendChild(scoreDisplay);
 
 const timerDisplay = document.createElement("div");
-timerDisplay.id = "safeTimerDisplay";
-timerDisplay.textContent = "Time: 30";
+timerDisplay.id = "timerDisplay";
+timerDisplay.className = "timer";
 container.appendChild(timerDisplay);
+
+const progressBar = document.createElement("div");
+progressBar.className = "progressBarContainer";
+container.appendChild(progressBar);
+
+const progressBarFill = document.createElement("div");
+progressBarFill.id = "progressBarFill";
+progressBar.appendChild(progressBarFill);
 
 const grid = document.createElement("div");
 grid.className = "grid";
@@ -21,13 +28,16 @@ for (let i = 0; i < 9; i++) {
   grid.appendChild(hole);
   holes.push(hole);
 }
+
 const startButton = document.createElement("button");
 startButton.textContent = "Start";
 container.appendChild(startButton);
-startButton.addEventListener("click", startGame);
 
 let score = 0;
 let moleInterval;
+let timerInterval;
+
+startButton.addEventListener("click", startGame);
 
 function showMole() {
   for (let i = 0; i < holes.length; i++) {
@@ -43,41 +53,53 @@ function showMole() {
   mole.addEventListener("click", () => {
     score++;
     scoreDisplay.textContent = "Score: " + score;
-    mole.remove();
+    mole.src = "./mole_injured.png";
+    setTimeout(() => {
+      mole.remove();
+    }, 1000);
   });
 
   randomHole.appendChild(mole);
 }
 
-function timer() {
-  let sec = 30;
-  const time = setInterval(() => {
-    timerDisplay.textContent = "Time: " + sec;
-    sec--;
-
-    if (sec < 0) {
-      clearInterval(time);
-      clearInterval(moleInterval);
-      startButton.disabled = false;
-
-      for (let i = 0; i < holes.length; i++) {
-        const mole = holes[i].querySelector(".mole");
-        if (mole) mole.remove();
-      }
-
-      timerDisplay.textContent = "Time's up!";
-    }
-  }, 1000);
-}
+const totalTime = 30;
 
 function startGame() {
   score = 0;
   scoreDisplay.textContent = "Score: 0";
-  timerDisplay.textContent = "Time: 30";
   showMole();
-  moleInterval = setInterval(showMole, 1000);
-  timer();
+
+  let timeLeft = totalTime;
+  progressBarFill.style.width = "0%";
+  timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+
+  clearInterval(moleInterval);
+  clearInterval(timerInterval);
+
+  const moleSpeed = 900;
+  moleInterval = setInterval(showMole, moleSpeed);
+
   startButton.disabled = true;
+
+  timerInterval = setInterval(() => {
+    if (timeLeft >= 0) {
+      const progressPercentage = (1 - timeLeft / totalTime) * 100;
+      progressBarFill.style.width = progressPercentage + "%";
+      timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+      timeLeft--;
+    } else {
+      clearInterval(timerInterval);
+      clearInterval(moleInterval);
+      timerDisplay.textContent = "Time Up!";
+      progressBarFill.style.width = "100%";
+      startButton.disabled = false;
+      for (let i = 0; i < holes.length; i++) {
+        const mole = holes[i].querySelector(".mole");
+        if (mole) mole.remove();
+      }
+      playJumpscare();
+    }
+  }, 1000);
 
   const hammer = document.createElement("img");
   hammer.src = "./hammer.png";
@@ -99,4 +121,40 @@ function startGame() {
       hammer.style.transform = "rotate(-45deg)";
     }, 100);
   });
+}
+
+function playJumpscare() {
+  const video = document.createElement("video");
+  video.src = "./jumpscare.mp4";
+  video.autoplay = true;
+  video.controls = false;
+  video.style.position = "fixed";
+  video.style.top = "0";
+  video.style.left = "0";
+  video.style.width = "100vw";
+  video.style.height = "100vh";
+  video.style.objectFit = "cover";
+  video.style.zIndex = "9999";
+  video.style.backgroundColor = "black";
+  document.body.appendChild(video);
+
+  video.addEventListener("ended", () => {
+    video.remove();
+    displayScoreMenu();
+  });
+}
+
+function displayScoreMenu() {
+  const finalMenu = Object.assign(document.createElement("div"), {
+    className: "scoreMenu",
+  });
+  finalMenu.innerHTML = `
+    <div>Final Score: ${score}</div>
+    <button id="playAgainBtn">Play Again</button>
+  `;
+  container.appendChild(finalMenu);
+  document.getElementById("playAgainBtn").onclick = () => {
+    finalMenu.remove();
+    startGame();
+  };
 }
