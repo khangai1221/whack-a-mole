@@ -82,7 +82,7 @@ function startGame() {
   startButton.disabled = true;
 
   timerInterval = setInterval(() => {
-    if (timeLeft >= 0) {
+    if (timeLeft > 0) {
       const progressPercentage = (1 - timeLeft / totalTime) * 100;
       progressBarFill.style.width = progressPercentage + "%";
       timerDisplay.textContent = `Time Left: ${timeLeft}s`;
@@ -124,24 +124,34 @@ function startGame() {
 }
 
 function playJumpscare() {
-  const video = document.createElement("video");
-  video.src = "./jumpscare.mp4";
-  video.autoplay = true;
-  video.controls = false;
-  video.style.position = "fixed";
-  video.style.top = "0";
-  video.style.left = "0";
-  video.style.width = "100vw";
-  video.style.height = "100vh";
-  video.style.objectFit = "cover";
-  video.style.zIndex = "9999";
-  video.style.backgroundColor = "black";
-  document.body.appendChild(video);
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.backgroundColor = "black";
+  overlay.style.zIndex = "10000";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
 
-  video.addEventListener("ended", () => {
-    video.remove();
+  const image = document.createElement("img");
+  image.src = "./jumpscare.jpeg";
+  image.style.width = "100%";
+  image.style.height = "100%";
+  image.style.objectFit = "cover";
+
+  const scream = new Audio("./jumpscare.mp3");
+  scream.play();
+
+  overlay.appendChild(image);
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.remove();
     displayScoreMenu();
-  });
+  }, 4000);
 }
 
 function displayScoreMenu() {
