@@ -97,7 +97,7 @@ function startGame() {
         const mole = holes[i].querySelector(".mole");
         if (mole) mole.remove();
       }
-      playJumpscare();
+      displayScoreMenu(); 
     }
   }, 1000);
 
@@ -121,37 +121,6 @@ function startGame() {
       hammer.style.transform = "rotate(-45deg)";
     }, 100);
   });
-}
-
-function playJumpscare() {
-  const overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100vw";
-  overlay.style.height = "100vh";
-  overlay.style.backgroundColor = "black";
-  overlay.style.zIndex = "10000";
-  overlay.style.display = "flex";
-  overlay.style.justifyContent = "center";
-  overlay.style.alignItems = "center";
-
-  const image = document.createElement("img");
-  image.src = "./jumpscare.jpeg";
-  image.style.width = "100%";
-  image.style.height = "100%";
-  image.style.objectFit = "cover";
-
-  const scream = new Audio("./jumpscare.mp3");
-  scream.play();
-
-  overlay.appendChild(image);
-  document.body.appendChild(overlay);
-
-  setTimeout(() => {
-    overlay.remove();
-    displayScoreMenu();
-  }, 4000);
 }
 
 function displayScoreMenu() {
